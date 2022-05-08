@@ -1,3 +1,5 @@
+import 'react-native-gesture-handler';
+
 import { useEffect } from 'react';
 import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -5,35 +7,23 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Inter_500Medium, Inter_400Regular } from '@expo-google-fonts/inter';
 
 import { theme } from './src/theme';
-import { Widget } from './src/components/Widget';
+import Widget from './src/components/Widget';
 
 export default function App() {
+  //Segura a splash screen até que as fontes sejam carregadas
+  SplashScreen.preventAutoHideAsync();
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
   });
 
-  useEffect(()=>{
-    async function prepare() {
-      if(!fontsLoaded) {
-        //Segura a splash screen até que as fontes sejam carregadas
-        await SplashScreen.preventAutoHideAsync();
-        // await new Promise(resolve => setTimeout(resolve, 2000));
-      }
-    };
-    
-    prepare();
-  }, []);
+  if(!fontsLoaded) {
+    //não carregou as fontes ainda...
+    return null;
+  }
   
-  useEffect(()=>{
-    async function prepare() {
-      if(fontsLoaded) {
-        //Remove a splashscreen quando a fonte for carregda
-        await SplashScreen.hideAsync();
-      }
-    };
-    prepare();
-  }, [fontsLoaded]);
+  //Remove a splashscreen quando a fonte for carregda
+  SplashScreen.hideAsync();
 
   return (
     <View 
@@ -42,12 +32,12 @@ export default function App() {
         backgroundColor: theme.colors.background,
       }}
     >
-      <Widget />
       <StatusBar 
         style="light"
         backgroundColor='transparent'
         translucent
       />
+      <Widget />
     </View>
   );
 }
